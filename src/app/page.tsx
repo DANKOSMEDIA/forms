@@ -1,19 +1,17 @@
-"use client";
+import { useEffect } from "react";
 
 export default function Page() {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://paperform.co/__embed.min.js";
+    script.defer = true;
+    document.body.appendChild(script);
+  }, []);
+
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Guardians Digital Intake Form</h1>
-      <iframe
-        src="https://guardians-digital-new-client.paperform.co"
-        style={{
-          width: "100%",
-          height: "1000px",
-          border: "1px solid #ccc",
-        }}
-        frameBorder="0"
-        title="Paperform"
-      ></iframe>
+      <div data-paperform-id="guardians-digital-new-client"></div>
     </div>
   );
 }
