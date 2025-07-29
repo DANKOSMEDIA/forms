@@ -11,7 +11,18 @@ export default function Page() {
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Guardians Digital Intake Form</h1>
-      <div data-paperform-id="guardians-digital-new-client"></div>
+      <button
+        data-paperform-id="guardians-digital-new-client"
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "#2E7D32",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px"
+        }}
+      >
+        Launch Form
+      </button>
     </div>
   );
 }
