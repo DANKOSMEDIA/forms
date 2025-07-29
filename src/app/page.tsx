@@ -1,28 +1,21 @@
-import { useEffect } from "react";
-
 export default function Page() {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://paperform.co/__embed.min.js";
-    script.defer = true;
-    document.body.appendChild(script);
-  }, []);
-
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Guardians Digital Intake Form</h1>
-      <button
-        data-paperform-id="guardians-digital-new-client"
+      <a
+        href="https://guardians-digital-new-client.paperform.co"
+        target="_blank"
+        rel="noopener noreferrer"
         style={{
           padding: "10px 20px",
-          backgroundColor: "#2E7D32",
+          backgroundColor: "#FF6B00",
           color: "#fff",
-          border: "none",
-          borderRadius: "5px"
+          borderRadius: "8px",
+          textDecoration: "none"
         }}
       >
-        Launch Form
-      </button>
+        Open Form
+      </a>
     </div>
   );
 }
