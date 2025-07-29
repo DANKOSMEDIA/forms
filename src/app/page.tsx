@@ -38,12 +38,32 @@ export default function Page() {
     }
   };
 
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.innerHTML = `<div data-paperform-id="${paperforms[index].id}"></div>`;
-      loadPaperformScript();
+useEffect(() => {
+  if (containerRef.current) {
+    // Clear previous embed
+    containerRef.current.innerHTML = "";
+
+    // Create new div with Paperform ID
+    const embedDiv = document.createElement("div");
+    embedDiv.setAttribute("data-paperform-id", paperforms[index].id);
+    containerRef.current.appendChild(embedDiv);
+
+    // Load Paperform embed script
+    const scriptId = "paperform-embed";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = "https://paperform.co/__embed.min.js";
+      script.async = true;
+      script.onload = () => console.log("✅ Paperform script loaded");
+      document.body.appendChild(script);
+    } else {
+      // Refresh if script is already loaded
+      window?.PaperformEmbed?.refresh();
     }
-  }, [index]);
+  }
+}, [index]);
+
 
   const next = () => setIndex((index + 1) % paperforms.length);
   const prev = () => setIndex((index - 1 + paperforms.length) % paperforms.length);
