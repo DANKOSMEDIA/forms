@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 type Form = {
   title: string;
-  id: string; // This is the Paperform ID from your URL
+  id: string;
 };
 
 const forms: Form[] = [
@@ -18,22 +18,24 @@ const forms: Form[] = [
   },
 ];
 
-function PaperformEmbed({ id }: { id: string }) {
-  useEffect(() => {
-    const existingScript = document.querySelector('script[src="https://paperform.co/__embed"]');
-    if (!existingScript) {
-      const script = document.createElement('script');
-      script.src = 'https://paperform.co/__embed';
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, [id]);
-
-  return <div data-paperform-id={id}></div>;
-}
-
 export default function HomePage() {
   const [activeForm, setActiveForm] = useState(forms[0]);
+
+  useEffect(() => {
+    // Clear any existing embedded forms
+    const container = document.getElementById('paperform-container');
+    if (container) container.innerHTML = `<div data-paperform-id="${activeForm.id}"></div>`;
+
+    // Remove old embed script if it exists
+    const oldScript = document.querySelector('script[src="https://paperform.co/__embed.min.js"]');
+    if (oldScript) oldScript.remove();
+
+    // Add Paperform embed script
+    const script = document.createElement('script');
+    script.src = 'https://paperform.co/__embed.min.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }, [activeForm]);
 
   return (
     <main className="p-6">
@@ -57,7 +59,7 @@ export default function HomePage() {
 
       <div className="bg-white rounded-xl shadow p-6 max-w-4xl mx-auto">
         <h2 className="text-2xl font-semibold mb-4 text-center">{activeForm.title}</h2>
-        <PaperformEmbed id={activeForm.id} />
+        <div id="paperform-container" />
       </div>
     </main>
   );
