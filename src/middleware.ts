@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';  // Make sure to import crypto
 
 export function middleware(request: NextRequest) {
-  // Skip CSP in development builds
   if (process.env.NODE_ENV === 'development') {
     return NextResponse.next();
   }
 
-  // Generate a new nonce for each request
-  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  // Use Web Crypto API; crypto is a global in the edge runtime
+  const nonce = crypto.randomUUID();
 
-  // Build the CSP header using the nonce
   const cspHeader = `
     default-src 'self';
     script-src 'nonce-${nonce}' 'strict-dynamic' 'self'
@@ -33,18 +30,15 @@ export function middleware(request: NextRequest) {
     block-all-mixed-content;
     upgrade-insecure-requests;
   `;
-
-  // Collapse whitespace
   const cspValue = cspHeader.replace(/\s{2,}/g, ' ').trim();
 
-  // Copy request headers and set nonce + CSP
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
   requestHeaders.set('Content-Security-Policy', cspValue);
 
-  // Create response with modified headers
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set('Content-Security-Policy', cspValue);
 
   return response;
 }
+
