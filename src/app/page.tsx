@@ -1,37 +1,63 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
+type Form = {
+  title: string;
+  id: string; // This is the Paperform ID from your URL
+};
+
+const forms: Form[] = [
+  {
+    title: 'Client Intake',
+    id: 'guardians-digital-new-client',
+  },
+  {
+    title: 'Ambassador Onboarding Form',
+    id: 'guardians-digital-ambassador-onboarding-form',
+  },
+];
+
+function PaperformEmbed({ id }: { id: string }) {
+  useEffect(() => {
+    const existingScript = document.querySelector('script[src="https://paperform.co/__embed"]');
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = 'https://paperform.co/__embed';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, [id]);
+
+  return <div data-paperform-id={id}></div>;
+}
+
 export default function HomePage() {
-  const forms = [
-    {
-      title: 'Client Intake',
-      embedUrl: 'https://guardians-digital-new-client.paperform.co',
-    },
-    {
-      title: 'Ambassador Onboarding Form',
-      embedUrl: 'https://guardians-digital-ambassador-onboarding-form.paperform.co',
-    },
-  ];
+  const [activeForm, setActiveForm] = useState(forms[0]);
 
   return (
     <main className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">Client Forms</h1>
-      <div className="flex flex-col gap-12">
-        {forms.map((form) => (
-          <div
-            key={form.title}
-            className="bg-white rounded-2xl shadow-md p-6 border border-gray-200"
-          >
-            <h2 className="text-2xl font-semibold mb-4 text-center">
+
+      <div className="flex justify-center mb-4">
+        <select
+          value={activeForm.id}
+          onChange={(e) =>
+            setActiveForm(forms.find((form) => form.id === e.target.value)!)
+          }
+          className="border p-2 rounded"
+        >
+          {forms.map((form) => (
+            <option key={form.id} value={form.id}>
               {form.title}
-            </h2>
-            <iframe
-              src={form.embedUrl}
-              title={form.title}
-              style={{ width: '100%', height: '800px', border: 'none', borderRadius: '8px' }}
-              allow="camera; microphone; autoplay; encrypted-media;"
-            />
-          </div>
-        ))}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="bg-white rounded-xl shadow p-6 max-w-4xl mx-auto">
+        <h2 className="text-2xl font-semibold mb-4 text-center">{activeForm.title}</h2>
+        <PaperformEmbed id={activeForm.id} />
       </div>
     </main>
   );
