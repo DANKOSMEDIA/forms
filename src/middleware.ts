@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';  // import crypto so randomUUID() is available
+import crypto from 'crypto';  // Make sure to import crypto
 
 export function middleware(request: NextRequest) {
-  // Skip CSP in development
+  // Skip CSP in development builds
   if (process.env.NODE_ENV === 'development') {
     return NextResponse.next();
   }
 
-  // Create a unique nonce for this response
+  // Generate a new nonce for each request
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
   // Build the CSP header using the nonce
@@ -34,15 +34,15 @@ export function middleware(request: NextRequest) {
     upgrade-insecure-requests;
   `;
 
-  // Collapse whitespace so the CSP header is valid
+  // Collapse whitespace
   const cspValue = cspHeader.replace(/\s{2,}/g, ' ').trim();
 
-  // Clone request headers and set the nonce and CSP
+  // Copy request headers and set nonce + CSP
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
   requestHeaders.set('Content-Security-Policy', cspValue);
 
-  // Build the response with the updated headers
+  // Create response with modified headers
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set('Content-Security-Policy', cspValue);
 
