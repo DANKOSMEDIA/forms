@@ -1,17 +1,19 @@
+// app/page.tsx
 'use client';
 
-import { useEffect } from 'react';
+import Script from 'next/script';
 
 export default function Page() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://paperform.co/__embed.min.js';
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
-
   return (
-    <div data-paperform-id="guardians-digital-ambassador-onboarding-form"></div>
+    <>
+      {/* Paperform embed target */}
+      <div data-paperform-id="guardians-digital-ambassador-onboarding-form"></div>
+
+      {/* Load the Paperform embed script after the page becomes interactive */}
+      <Script
+        src="https://paperform.co/__embed.min.js"
+        strategy="afterInteractive"
+      />
+    </>
   );
 }
-
